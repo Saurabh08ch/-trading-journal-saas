@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --background: 6 9 19;
+  --foreground: 236 242 255;
+  --muted: 156 173 201;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  color: rgb(var(--foreground));
+  background:
+    radial-gradient(circle at top left, rgba(84, 210, 179, 0.16), transparent 30%),
+    radial-gradient(circle at top right, rgba(241, 185, 91, 0.12), transparent 28%),
+    linear-gradient(180deg, #060913 0%, #0b1120 54%, #080d18 100%);
+  font-family: var(--font-body), sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent 90%);
+  pointer-events: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(84, 210, 179, 0.28);
+  color: white;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display), sans-serif;
+  }
+}
+
+@layer components {
+  .section-shell {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .panel {
+    @apply rounded-[28px] border border-white/10 bg-white/5 shadow-card backdrop-blur-xl;
+  }
+
+  .panel-strong {
+    @apply rounded-[28px] border border-white/10 bg-slate-950/70 shadow-card backdrop-blur-xl;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-300;
+  }
+
+  .page-title {
+    @apply text-3xl font-semibold tracking-tight text-white md:text-4xl;
+  }
+
+  .page-copy {
+    @apply max-w-2xl text-sm leading-7 text-slate-300 md:text-base;
+  }
+
+  .label {
+    @apply mb-2 block text-sm font-medium text-slate-200;
+  }
+
+  .input {
+    @apply h-12 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-accent/80 focus:bg-white/8 focus:ring-2 focus:ring-accent/20;
+  }
+
+  .textarea {
+    @apply min-h-32 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-accent/80 focus:bg-white/8 focus:ring-2 focus:ring-accent/20;
+  }
+
+  .primary-button {
+    @apply inline-flex h-11 items-center justify-center rounded-full bg-accent px-5 text-sm font-semibold text-slate-950 transition hover:bg-accent-soft disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .secondary-button {
+    @apply inline-flex h-11 items-center justify-center rounded-full border border-white/10 bg-white/5 px-5 text-sm font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .badge-positive {
+    @apply inline-flex items-center rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-xs font-medium text-emerald-200;
+  }
+
+  .badge-negative {
+    @apply inline-flex items-center rounded-full border border-rose-400/20 bg-rose-400/10 px-2.5 py-1 text-xs font-medium text-rose-200;
+  }
+
+  .badge-neutral {
+    @apply inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-200;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-white via-white to-slate-400 bg-clip-text text-transparent;
+  }
+
+  .text-muted {
+    color: rgb(var(--muted));
+  }
+}

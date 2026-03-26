@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Instrument {
+  NIFTY
+  BANKNIFTY
+  CRYPTO
+  STOCKS
+}
+
+enum TradeOutcome {
+  WIN
+  LOSS
+  BREAKEVEN
+}
+
+enum Emotion {
+  FEAR
+  FOMO
+  REVENGE_TRADING
+  CONFIDENCE
+  DISCIPLINE
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  image     String?
+  createdAt DateTime  @default(now()) @map("created_at")
+  accounts  Account[]
+  sessions  Session[]
+  trades    Trade[]
+
+  @@map("users")
+}
+
+model Trade {
+  id            String       @id @default(cuid())
+  userId        String       @map("user_id")
+  date          DateTime
+  instrument    Instrument
+  strategy      String
+  entryPrice    Decimal      @map("entry_price") @db.Decimal(18, 4)
+  exitPrice     Decimal      @map("exit_price") @db.Decimal(18, 4)
+  stopLoss      Decimal      @map("stop_loss") @db.Decimal(18, 4)
+  riskPercent   Decimal      @map("risk_percent") @db.Decimal(6, 2)
+  positionSize  Decimal      @map("position_size") @db.Decimal(18, 4)
+  pnl           Decimal      @db.Decimal(18, 2)
+  rrRatio       Decimal      @map("rr_ratio") @db.Decimal(10, 2)
+  outcome       TradeOutcome
+  emotion       Emotion
+  notes         String?      @db.Text
+  screenshotUrl String?      @map("screenshot_url")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+  @@map("trades")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
