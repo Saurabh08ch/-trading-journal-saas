@@ -1,11 +1,12 @@
 import { z } from "zod";
 
-import { EMOTION_VALUES, INSTRUMENT_VALUES } from "@/lib/constants";
+import { EMOTION_VALUES, INSTRUMENT_VALUES, TRADE_TYPE_VALUES } from "@/lib/constants";
 
 export const tradeFormSchema = z
   .object({
     date: z.string().min(1, "Trade date is required."),
     instrument: z.enum(INSTRUMENT_VALUES),
+    tradeType: z.enum(TRADE_TYPE_VALUES).optional().default("BUY"),
     strategy: z.string().trim().min(2, "Strategy name is required.").max(80),
     entryPrice: z.coerce.number().positive("Entry price must be greater than 0."),
     exitPrice: z.coerce.number().positive("Exit price must be greater than 0."),

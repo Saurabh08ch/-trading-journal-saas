@@ -1,4 +1,4 @@
-import { Emotion, Instrument, Prisma, TradeOutcome } from "@prisma/client";
+import { Emotion, Instrument, Prisma, TradeOutcome, TradeType } from "@prisma/client";
 
 import { calculateTradeMetrics } from "@/lib/trade-math";
 import { deleteUploadByUrl, saveScreenshot } from "@/lib/uploads";
@@ -22,6 +22,7 @@ export async function buildTradeWriteInput(
   const parsed = tradeFormSchema.safeParse({
     date: formData.get("date"),
     instrument: formData.get("instrument"),
+    tradeType: formData.get("tradeType"),
     strategy: formData.get("strategy"),
     entryPrice: formData.get("entryPrice"),
     exitPrice: formData.get("exitPrice"),
@@ -61,6 +62,7 @@ export async function buildTradeWriteInput(
   }
 
   const metrics = calculateTradeMetrics({
+    tradeType: parsed.data.tradeType,
     entryPrice: parsed.data.entryPrice,
     exitPrice: parsed.data.exitPrice,
     stopLoss: parsed.data.stopLoss,
@@ -72,6 +74,7 @@ export async function buildTradeWriteInput(
     data: {
       date: toTradeDate(parsed.data.date),
       instrument: parsed.data.instrument as Instrument,
+      tradeType: parsed.data.tradeType as TradeType,
       strategy: parsed.data.strategy,
       entryPrice: parsed.data.entryPrice,
       exitPrice: parsed.data.exitPrice,

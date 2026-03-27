@@ -8,6 +8,7 @@ export function buildTradesCsv(trades: SerializedTrade[]) {
   const header = [
     "Date",
     "Instrument",
+    "Trade Type",
     "Strategy",
     "Entry Price",
     "Exit Price",
@@ -26,6 +27,7 @@ export function buildTradesCsv(trades: SerializedTrade[]) {
     [
       trade.date,
       trade.instrument,
+      trade.tradeType ?? "BUY",
       trade.strategy,
       trade.entryPrice,
       trade.exitPrice,

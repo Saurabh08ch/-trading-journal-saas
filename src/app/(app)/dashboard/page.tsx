@@ -3,8 +3,11 @@ import { Activity, ArrowRight, BrainCircuit, IndianRupee, ShieldCheck } from "lu
 import { redirect } from "next/navigation";
 
 import { DashboardOverviewChart } from "@/components/charts/dashboard-overview-chart";
+import { AIPerformanceInsights } from "@/components/dashboard/ai-performance-insights";
+import { GenerateShareableReportButton } from "@/components/dashboard/generate-shareable-report-button";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { TradeHistoryTable } from "@/components/dashboard/trade-history-table";
+import { getAITradeAnalysis } from "@/lib/ai-analysis-service";
 import { EMOTION_OPTIONS } from "@/lib/constants";
 import { getCurrentUser } from "@/lib/auth";
 import { buildAnalyticsSnapshot } from "@/lib/trade-math";
@@ -22,7 +25,10 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const trades = await listTradesForUser(user.id);
+  const [trades, aiAnalysis] = await Promise.all([
+    listTradesForUser(user.id),
+    getAITradeAnalysis(user.id),
+  ]);
   const analytics = buildAnalyticsSnapshot(trades);
   const bestStrategy = analytics.strategyPerformance[0];
   const topEmotion = analytics.emotionBreakdown[0];
@@ -58,6 +64,7 @@ export default async function DashboardPage() {
                 Open analytics
                 <ArrowRight className="h-4 w-4" />
               </Link>
+              <GenerateShareableReportButton />
             </div>
           </div>
         </div>
@@ -92,6 +99,8 @@ export default async function DashboardPage() {
           tone={analytics.totals.averageRR > 0 ? "positive" : "neutral"}
         />
       </section>
+
+      <AIPerformanceInsights analysis={aiAnalysis} />
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
         <DashboardOverviewChart data={analytics.monthlyPnL} />

@@ -5,7 +5,13 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { AlertCircle, Calculator, ImagePlus, X } from "lucide-react";
 
-import { EMOTION_OPTIONS, INSTRUMENT_OPTIONS, OUTCOME_LABELS } from "@/lib/constants";
+import {
+  EMOTION_OPTIONS,
+  INSTRUMENT_OPTIONS,
+  OUTCOME_LABELS,
+  TRADE_TYPE_LABELS,
+  TRADE_TYPE_OPTIONS,
+} from "@/lib/constants";
 import { calculateTradeMetrics } from "@/lib/trade-math";
 import { SerializedTrade } from "@/lib/trade-service";
 import { formatCurrency, formatDecimal, toDateInputValue } from "@/lib/utils";
@@ -18,6 +24,7 @@ type TradeFormProps = {
 type TradeFormState = {
   date: string;
   instrument: (typeof INSTRUMENT_OPTIONS)[number]["value"];
+  tradeType: (typeof TRADE_TYPE_OPTIONS)[number]["value"];
   strategy: string;
   entryPrice: string;
   exitPrice: string;
@@ -34,6 +41,7 @@ function getInitialState(trade?: SerializedTrade): TradeFormState {
   return {
     date: trade ? toDateInputValue(trade.date) : new Date().toISOString().slice(0, 10),
     instrument: trade?.instrument ?? "NIFTY",
+    tradeType: trade?.tradeType ?? "BUY",
     strategy: trade?.strategy ?? "",
     entryPrice: trade ? String(trade.entryPrice) : "",
     exitPrice: trade ? String(trade.exitPrice) : "",
@@ -56,6 +64,7 @@ export function TradeForm({ mode, trade }: TradeFormProps) {
   const [isPending, startTransition] = useTransition();
 
   const liveMetrics = calculateTradeMetrics({
+    tradeType: formState.tradeType,
     entryPrice: Number(formState.entryPrice) || 0,
     exitPrice: Number(formState.exitPrice) || 0,
     stopLoss: Number(formState.stopLoss) || 0,
@@ -78,6 +87,7 @@ export function TradeForm({ mode, trade }: TradeFormProps) {
 
             payload.append("date", formState.date);
             payload.append("instrument", formState.instrument);
+            payload.append("tradeType", formState.tradeType);
             payload.append("strategy", formState.strategy);
             payload.append("entryPrice", formState.entryPrice);
             payload.append("exitPrice", formState.exitPrice);
@@ -148,6 +158,26 @@ export function TradeForm({ mode, trade }: TradeFormProps) {
               }
             >
               {INSTRUMENT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value} className="bg-slate-950">
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            <span className="label">Trade Type</span>
+            <select
+              className="input"
+              value={formState.tradeType}
+              onChange={(event) =>
+                setFormState((current) => ({
+                  ...current,
+                  tradeType: event.target.value as TradeFormState["tradeType"],
+                }))
+              }
+            >
+              {TRADE_TYPE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value} className="bg-slate-950">
                   {option.label}
                 </option>
@@ -373,7 +403,7 @@ export function TradeForm({ mode, trade }: TradeFormProps) {
             <div>
               <h3 className="text-lg font-semibold text-white">Live calculations</h3>
               <p className="mt-1 text-sm text-slate-400">
-                Auto-calculated from entry, exit, stop, and size.
+                Auto-calculated from trade type, entry, exit, stop, and size.
               </p>
             </div>
           </div>
@@ -424,8 +454,11 @@ export function TradeForm({ mode, trade }: TradeFormProps) {
         <div className="panel p-6">
           <h3 className="text-lg font-semibold text-white">Execution note</h3>
           <p className="mt-3 text-sm leading-7 text-slate-400">
-            Calculations currently assume a long trade: PnL is derived from exit price minus
-            entry price, multiplied by position size.
+            {TRADE_TYPE_LABELS[formState.tradeType]} uses{" "}
+            {formState.tradeType === "SELL"
+              ? "PnL = (Entry - Exit) x Position Size."
+              : "PnL = (Exit - Entry) x Position Size."}{" "}
+            R is based on realized PnL divided by the risk between entry and stop loss.
           </p>
         </div>
       </aside>

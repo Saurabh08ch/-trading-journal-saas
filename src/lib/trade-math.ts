@@ -1,5 +1,7 @@
 import { format } from "date-fns";
 
+import { TradeTypeValue } from "@/lib/constants";
+
 type TradeOutcomeValue = "WIN" | "LOSS" | "BREAKEVEN";
 
 export type AnalyticsTrade = {
@@ -14,6 +16,7 @@ export type AnalyticsTrade = {
 };
 
 export type TradeComputationInput = {
+  tradeType?: TradeTypeValue;
   entryPrice: number;
   exitPrice: number;
   stopLoss: number;
@@ -46,12 +49,15 @@ export function roundTo(value: number, decimals = 2) {
 }
 
 export function calculateTradeMetrics({
+  tradeType = "BUY",
   entryPrice,
   exitPrice,
   stopLoss,
   positionSize,
 }: TradeComputationInput) {
-  const pnl = roundTo((exitPrice - entryPrice) * positionSize, 2);
+  const priceMove =
+    tradeType === "SELL" ? entryPrice - exitPrice : exitPrice - entryPrice;
+  const pnl = roundTo(priceMove * positionSize, 2);
   const totalRisk = roundTo(Math.abs(entryPrice - stopLoss) * positionSize, 2);
   const rrRatio = totalRisk === 0 ? 0 : roundTo(pnl / totalRisk, 2);
 

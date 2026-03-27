@@ -3,7 +3,12 @@ import { format } from "date-fns";
 import { ExternalLink, PencilLine } from "lucide-react";
 
 import { DeleteTradeButton } from "@/components/dashboard/delete-trade-button";
-import { EMOTION_OPTIONS, INSTRUMENT_OPTIONS, OUTCOME_LABELS } from "@/lib/constants";
+import {
+  EMOTION_OPTIONS,
+  INSTRUMENT_OPTIONS,
+  OUTCOME_LABELS,
+  TRADE_TYPE_LABELS,
+} from "@/lib/constants";
 import { SerializedTrade } from "@/lib/trade-service";
 import { formatCurrency, formatDecimal } from "@/lib/utils";
 
@@ -56,6 +61,7 @@ export function TradeHistoryTable({ trades }: TradeHistoryTableProps) {
               {[
                 "Date",
                 "Instrument",
+                "Trade Type",
                 "Strategy",
                 "Entry",
                 "Exit",
@@ -79,6 +85,9 @@ export function TradeHistoryTable({ trades }: TradeHistoryTableProps) {
                 </td>
                 <td className="px-6 py-4 text-slate-300">
                   {instrumentLabelMap[trade.instrument] ?? trade.instrument}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-slate-300">
+                  {TRADE_TYPE_LABELS[trade.tradeType ?? "BUY"] ?? trade.tradeType ?? "BUY"}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="font-medium text-white">{trade.strategy}</div>
