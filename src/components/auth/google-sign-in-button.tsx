@@ -7,27 +7,30 @@ import { Chrome } from "lucide-react";
 type GoogleSignInButtonProps = {
   callbackUrl?: string;
   className?: string;
+  disabled?: boolean;
 };
 
 export function GoogleSignInButton({
   callbackUrl = "/dashboard",
   className,
+  disabled = false,
 }: GoogleSignInButtonProps) {
   const [isPending, startTransition] = useTransition();
+  const isDisabled = disabled || isPending;
 
   return (
     <button
       type="button"
-      className={`secondary-button w-full gap-3 ${className ?? ""}`}
+      className={`secondary-button w-full gap-3 ${isDisabled ? "cursor-not-allowed opacity-60" : ""} ${className ?? ""}`}
       onClick={() =>
         startTransition(() => {
           void signIn("google", { callbackUrl });
         })
       }
-      disabled={isPending}
+      disabled={isDisabled}
     >
       <Chrome className="h-4 w-4" />
-      {isPending ? "Connecting..." : "Continue with Google"}
+      {disabled ? "Google OAuth not configured" : isPending ? "Connecting..." : "Continue with Google"}
     </button>
   );
 }

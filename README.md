@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TradePilot
 
-## Getting Started
+TradePilot is a modern SaaS-style trading journal built with Next.js 14, PostgreSQL, Tailwind CSS, Prisma, and Google OAuth.
 
-First, run the development server:
+## Features
+
+- Google OAuth authentication with private dashboards
+- Trade logging with date, instrument, strategy, prices, risk, position size, notes, emotion tags, and screenshots
+- Automatic calculations for PnL, reward-to-risk, win/loss status, total trades, win rate, and average RR
+- Trade history with edit and delete actions
+- Analytics dashboard for monthly PnL, strategy performance, win rate split, and emotional patterns
+- Docker and Docker Compose setup for VPS deployment
+
+## Tech Stack
+
+- Next.js 14 App Router
+- Tailwind CSS
+- Node.js route handlers
+- PostgreSQL
+- Prisma ORM
+- NextAuth.js with Google OAuth
+- Recharts
+
+## Local Setup
+
+1. Copy `.env.example` to `.env` and fill in the Google OAuth credentials.
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start PostgreSQL with Docker:
+
+```bash
+docker compose up -d db
+```
+
+4. Apply migrations:
+
+```bash
+npm run db:migrate
+```
+
+5. Start the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Recommended Node.js version: `20` or `22`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
 
-## Learn More
+Use `.env.example` as the template. The important values are:
 
-To learn more about Next.js, take a look at the following resources:
+- `DATABASE_URL`
+- `NEXTAUTH_URL`
+- `NEXTAUTH_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `POSTGRES_DB`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Docker Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Build and run the full stack:
 
-## Deploy on Vercel
+```bash
+docker compose up --build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The app runs on port `3000` and PostgreSQL runs on `5432`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes
+
+- Screenshot uploads are stored in the `uploads/` directory and persisted through a Docker volume.
+- Current trade calculations assume long trades based on entry and exit prices.

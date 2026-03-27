@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -316,7 +315,12 @@ export function TradeForm({ mode, trade }: TradeFormProps) {
             {previewUrl ? (
               <div className="mt-4 overflow-hidden rounded-[24px] border border-white/10 bg-slate-950/70">
                 <div className="relative aspect-[16/9] w-full">
-                  <Image src={previewUrl} alt="Trade screenshot preview" fill className="object-cover" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={previewUrl}
+                    alt="Trade screenshot preview"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
                 </div>
                 <div className="flex items-center justify-between gap-3 px-4 py-3">
                   <div className="text-xs text-slate-400">

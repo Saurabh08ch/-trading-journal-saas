@@ -29,14 +29,15 @@ enum Emotion {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  name      String?
-  image     String?
-  createdAt DateTime  @default(now()) @map("created_at")
-  accounts  Account[]
-  sessions  Session[]
-  trades    Trade[]
+  id               String            @id @default(cuid())
+  email            String            @unique
+  name             String?
+  image            String?
+  createdAt        DateTime          @default(now()) @map("created_at")
+  accounts         Account[]
+  sessions         Session[]
+  trades           Trade[]
+  monthlySnapshots MonthlySnapshot[]
 
   @@map("users")
 }
@@ -64,6 +65,23 @@ model Trade {
 
   @@index([userId, date])
   @@map("trades")
+}
+
+model MonthlySnapshot {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  month       Int
+  year        Int
+  totalTrades Int      @map("total_trades")
+  winRate     Float    @map("win_rate")
+  totalProfit Float    @map("total_profit")
+  avgRR       Float    @map("avg_rr")
+  createdAt   DateTime @default(now()) @map("created_at")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, month, year])
+  @@index([userId, year, month])
+  @@map("monthly_snapshots")
 }
 
 model Account {

@@ -98,11 +98,11 @@ button {
   }
 
   .input {
-    @apply h-12 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-accent/80 focus:bg-white/8 focus:ring-2 focus:ring-accent/20;
+    @apply h-12 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-accent/80 focus:bg-white/10 focus:ring-2 focus:ring-accent/20;
   }
 
   .textarea {
-    @apply min-h-32 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-accent/80 focus:bg-white/8 focus:ring-2 focus:ring-accent/20;
+    @apply min-h-32 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-accent/80 focus:bg-white/10 focus:ring-2 focus:ring-accent/20;
   }
 
   .primary-button {

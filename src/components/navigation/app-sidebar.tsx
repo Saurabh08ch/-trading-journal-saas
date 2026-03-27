@@ -3,7 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { BarChart3, BookOpenText, LayoutDashboard, LogOut, PlusCircle } from "lucide-react";
+import {
+  BarChart3,
+  BookOpenText,
+  FileSpreadsheet,
+  LayoutDashboard,
+  LogOut,
+  PlusCircle,
+} from "lucide-react";
 
 import { APP_NAME } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -23,6 +30,11 @@ const navItems = [
     href: "/analytics",
     label: "Analytics",
     icon: BarChart3,
+  },
+  {
+    href: "/dashboard/reports",
+    label: "Reports",
+    icon: FileSpreadsheet,
   },
 ] as const;
 
@@ -52,7 +64,10 @@ export function AppSidebar({ userName, userEmail }: AppSidebarProps) {
         <nav className="mt-10 space-y-2">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const isActive =
+              item.href === "/dashboard"
+                ? pathname === item.href
+                : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             return (
               <Link
@@ -110,7 +125,10 @@ export function AppSidebar({ userName, userEmail }: AppSidebarProps) {
         <div className="section-shell flex gap-2 overflow-x-auto pb-4">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const isActive =
+              item.href === "/dashboard"
+                ? pathname === item.href
+                : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             return (
               <Link

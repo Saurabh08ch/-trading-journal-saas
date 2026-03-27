@@ -7,6 +7,7 @@ import { buildTradeWriteInput } from "@/lib/trade-write-service";
 import { deleteUploadByUrl } from "@/lib/uploads";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 type TradeRouteContext = {
   params: {

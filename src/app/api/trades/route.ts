@@ -6,6 +6,7 @@ import { listTradesForUser, serializeTrade } from "@/lib/trade-service";
 import { buildTradeWriteInput } from "@/lib/trade-write-service";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   const session = await auth();
