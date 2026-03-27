@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   LogOut,
   PlusCircle,
+  Users2,
 } from "lucide-react";
 
 import { APP_NAME } from "@/lib/constants";
@@ -41,10 +42,25 @@ const navItems = [
 type AppSidebarProps = {
   userName?: string | null;
   userEmail?: string | null;
+  showMentorDashboard?: boolean;
 };
 
-export function AppSidebar({ userName, userEmail }: AppSidebarProps) {
+export function AppSidebar({
+  userName,
+  userEmail,
+  showMentorDashboard = false,
+}: AppSidebarProps) {
   const pathname = usePathname();
+  const items = showMentorDashboard
+    ? [
+        ...navItems,
+        {
+          href: "/mentor/dashboard",
+          label: "Mentor",
+          icon: Users2,
+        },
+      ]
+    : navItems;
 
   return (
     <>
@@ -62,11 +78,13 @@ export function AppSidebar({ userName, userEmail }: AppSidebarProps) {
         </Link>
 
         <nav className="mt-10 space-y-2">
-          {navItems.map((item) => {
+          {items.map((item) => {
             const Icon = item.icon;
             const isActive =
               item.href === "/dashboard"
                 ? pathname === item.href
+                : item.href === "/mentor/dashboard"
+                  ? pathname === item.href || pathname.startsWith("/mentor/")
                 : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             return (
@@ -123,11 +141,13 @@ export function AppSidebar({ userName, userEmail }: AppSidebarProps) {
           </button>
         </div>
         <div className="section-shell flex gap-2 overflow-x-auto pb-4">
-          {navItems.map((item) => {
+          {items.map((item) => {
             const Icon = item.icon;
             const isActive =
               item.href === "/dashboard"
                 ? pathname === item.href
+                : item.href === "/mentor/dashboard"
+                  ? pathname === item.href || pathname.startsWith("/mentor/")
                 : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             return (

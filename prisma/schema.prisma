@@ -48,6 +48,9 @@ model User {
   trades        Trade[]
   monthlySnapshots MonthlySnapshot[]
   publicReports PublicReport[]
+  mentorStudents MentorStudent[] @relation("MentorStudentMentor")
+  studentMentors MentorStudent[] @relation("MentorStudentStudent")
+  tradeCommentsAuthored TradeComment[] @relation("TradeCommentMentor")
 }
 
 
@@ -72,6 +75,7 @@ model Trade {
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt @map("updated_at")
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments      TradeComment[]
 
   @@index([userId, date])
   @@map("trades")
@@ -105,6 +109,33 @@ model PublicReport {
   @@index([userId, month])
   @@index([isPublic])
   @@map("public_reports")
+}
+
+model MentorStudent {
+  id        String   @id @default(cuid())
+  mentorId  String   @map("mentor_id")
+  studentId String   @map("student_id")
+  mentor    User     @relation("MentorStudentMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  student   User     @relation("MentorStudentStudent", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([mentorId, studentId])
+  @@index([mentorId])
+  @@index([studentId])
+  @@map("mentor_students")
+}
+
+model TradeComment {
+  id        String   @id @default(cuid())
+  tradeId   String   @map("trade_id")
+  mentorId  String   @map("mentor_id")
+  comment   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  trade      Trade   @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  mentor     User    @relation("TradeCommentMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+
+  @@index([tradeId, createdAt])
+  @@index([mentorId])
+  @@map("trade_comments")
 }
 
 model Account {
