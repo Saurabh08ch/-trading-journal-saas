@@ -31,10 +31,10 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = user.id;
       }
-
       return session;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET, // ← ADD THIS LINE
 };
 
 export function auth() {
