@@ -2,7 +2,6 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-
 import { prisma } from "@/lib/prisma";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
@@ -12,12 +11,8 @@ export const isGoogleOAuthConfigured = Boolean(googleClientId && googleClientSec
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
-  session: {
-    strategy: "database",
-  },
-  pages: {
-    signIn: "/login",
-  },
+  session: { strategy: "database" },
+  pages: { signIn: "/login" },
   providers: isGoogleOAuthConfigured
     ? [
         GoogleProvider({
@@ -28,20 +23,20 @@ export const authOptions: NextAuthOptions = {
     : [],
   callbacks: {
     session: async ({ session, user }) => {
-      if (session.user) {
-        session.user.id = user.id;
-      }
+      if (session.user) session.user.id = user.id;
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET, // ← ADD THIS LINE
+  secret: process.env.NEXTAUTH_SECRET, // must be defined
 };
 
+// 🔹 Helper to get server-side session
 export function auth() {
   return getServerSession(authOptions);
 }
 
+// 🔹 Helper to get current logged-in user
 export async function getCurrentUser() {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   return session?.user ?? null;
 }
