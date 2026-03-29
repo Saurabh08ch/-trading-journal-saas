@@ -61,6 +61,7 @@ Use `.env.example` as the template. The important values are:
 - `NEXTAUTH_SECRET`
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
+- `BLOB_READ_WRITE_TOKEN` (required on Vercel for screenshot uploads)
 - `POSTGRES_DB`
 - `POSTGRES_USER`
 - `POSTGRES_PASSWORD`
@@ -77,5 +78,6 @@ The app runs on port `3000` and PostgreSQL runs on `5432`.
 
 ## Notes
 
-- Screenshot uploads are stored in the `uploads/` directory and persisted through a Docker volume.
+- Screenshot uploads are stored in the local `uploads/` directory during local/Docker development.
+- On Vercel, screenshot uploads require Blob storage via `BLOB_READ_WRITE_TOKEN`.
 - Current trade calculations assume long trades based on entry and exit prices.

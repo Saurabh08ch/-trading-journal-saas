@@ -1,9 +1,12 @@
 import crypto from "node:crypto";
 import path from "node:path";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
+import { del, put } from "@vercel/blob";
 
 const UPLOAD_ROOT = path.resolve(process.cwd(), "uploads");
 const MAX_UPLOAD_SIZE = 5 * 1024 * 1024;
+const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
+const IS_VERCEL = process.env.VERCEL === "1";
 
 const MIME_TYPES: Record<string, string> = {
   ".gif": "image/gif",
@@ -35,6 +38,10 @@ function extensionFromType(type: string) {
   return Object.entries(MIME_TYPES).find(([, mimeType]) => mimeType === type)?.[0] ?? "";
 }
 
+function isBlobUrl(uploadUrl: string) {
+  return uploadUrl.startsWith("http://") || uploadUrl.startsWith("https://");
+}
+
 export async function saveScreenshot(file: File, userId: string) {
   if (!file.type.startsWith("image/")) {
     throw new Error("Only image uploads are allowed.");
@@ -51,9 +58,25 @@ export async function saveScreenshot(file: File, userId: string) {
   }
 
   const relativePath = path.posix.join("trades", userId, `${crypto.randomUUID()}${extension}`);
-  const { absolutePath } = resolveUploadPath(relativePath);
   const buffer = Buffer.from(await file.arrayBuffer());
 
+  if (BLOB_TOKEN) {
+    const blob = await put(relativePath, buffer, {
+      access: "public",
+      contentType: file.type,
+      token: BLOB_TOKEN,
+    });
+
+    return blob.url;
+  }
+
+  if (IS_VERCEL) {
+    throw new Error(
+      "Screenshot uploads need Vercel Blob in production. Add BLOB_READ_WRITE_TOKEN to Vercel environment variables.",
+    );
+  }
+
+  const { absolutePath } = resolveUploadPath(relativePath);
   await mkdir(path.dirname(absolutePath), { recursive: true });
   await writeFile(absolutePath, buffer);
 
@@ -61,7 +84,20 @@ export async function saveScreenshot(file: File, userId: string) {
 }
 
 export async function deleteUploadByUrl(uploadUrl?: string | null) {
-  if (!uploadUrl || !uploadUrl.startsWith("/api/uploads/")) {
+  if (!uploadUrl) {
+    return;
+  }
+
+  if (isBlobUrl(uploadUrl)) {
+    if (!BLOB_TOKEN) {
+      return;
+    }
+
+    await del(uploadUrl, { token: BLOB_TOKEN });
+    return;
+  }
+
+  if (!uploadUrl.startsWith("/api/uploads/")) {
     return;
   }
 
