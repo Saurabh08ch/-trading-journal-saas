@@ -27,6 +27,28 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  events: {
+    async signIn(message) {
+      console.info("[NextAuth][event] signIn", {
+        userId: message.user.id,
+        email: message.user.email,
+        isNewUser: message.isNewUser,
+      });
+    },
+    async createUser(message) {
+      console.info("[NextAuth][event] createUser", {
+        userId: message.user.id,
+        email: message.user.email,
+      });
+    },
+    async linkAccount(message) {
+      console.info("[NextAuth][event] linkAccount", {
+        userId: message.user.id,
+        provider: message.account.provider,
+        providerAccountId: message.account.providerAccountId,
+      });
+    },
+  },
   logger: {
     error(code, metadata) {
       console.error("[NextAuth][error]", code, metadata);
