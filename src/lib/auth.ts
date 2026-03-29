@@ -27,6 +27,14 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  logger: {
+    error(code, metadata) {
+      console.error("[NextAuth][error]", code, metadata);
+    },
+    warn(code) {
+      console.warn("[NextAuth][warn]", code);
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET, // must be defined
 };
 
