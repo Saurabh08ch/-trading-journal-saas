@@ -5,9 +5,9 @@ import { getCurrentUser } from "@/lib/auth";
 import { getTradeForUser } from "@/lib/trade-service";
 
 type EditTradePageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export default async function EditTradePage({ params }: EditTradePageProps) {
@@ -17,7 +17,8 @@ export default async function EditTradePage({ params }: EditTradePageProps) {
     redirect("/login");
   }
 
-  const trade = await getTradeForUser(user.id, params.id);
+  const { id } = await params;
+  const trade = await getTradeForUser(user.id, id);
 
   if (!trade) {
     notFound();

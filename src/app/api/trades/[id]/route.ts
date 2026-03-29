@@ -10,9 +10,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type TradeRouteContext = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function GET(_request: Request, { params }: TradeRouteContext) {
@@ -22,9 +22,10 @@ export async function GET(_request: Request, { params }: TradeRouteContext) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { id } = await params;
   const trade = await prisma.trade.findFirst({
     where: {
-      id: params.id,
+      id,
       userId: session.user.id,
     },
   });
@@ -43,9 +44,10 @@ export async function PUT(request: Request, { params }: TradeRouteContext) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { id } = await params;
   const existingTrade = await prisma.trade.findFirst({
     where: {
-      id: params.id,
+      id,
       userId: session.user.id,
     },
   });
@@ -90,9 +92,10 @@ export async function DELETE(_request: Request, { params }: TradeRouteContext) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { id } = await params;
   const existingTrade = await prisma.trade.findFirst({
     where: {
-      id: params.id,
+      id,
       userId: session.user.id,
     },
   });

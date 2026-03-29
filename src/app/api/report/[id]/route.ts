@@ -6,13 +6,14 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type ReportRouteContext = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function GET(_request: Request, { params }: ReportRouteContext) {
-  const report = await getPublicReportAnalyticsById(params.id);
+  const { id } = await params;
+  const report = await getPublicReportAnalyticsById(id);
 
   if (!report) {
     return NextResponse.json({ error: "Report not found" }, { status: 404 });

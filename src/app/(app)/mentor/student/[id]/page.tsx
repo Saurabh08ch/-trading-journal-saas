@@ -10,9 +10,9 @@ import { getMentorStudentReviewData } from "@/lib/mentor-service";
 import { formatCurrency, formatPercent } from "@/lib/utils";
 
 type MentorStudentPageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export default async function MentorStudentPage({ params }: MentorStudentPageProps) {
@@ -22,7 +22,8 @@ export default async function MentorStudentPage({ params }: MentorStudentPagePro
     redirect("/login");
   }
 
-  const reviewData = await getMentorStudentReviewData(user.id, params.id);
+  const { id } = await params;
+  const reviewData = await getMentorStudentReviewData(user.id, id);
 
   if (!reviewData) {
     notFound();

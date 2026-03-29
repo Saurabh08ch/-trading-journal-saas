@@ -7,9 +7,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type MentorStudentRouteContext = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function GET(_request: Request, { params }: MentorStudentRouteContext) {
@@ -20,7 +20,8 @@ export async function GET(_request: Request, { params }: MentorStudentRouteConte
   }
 
   try {
-    const student = await getMentorStudentReviewData(session.user.id, params.id);
+    const { id } = await params;
+    const student = await getMentorStudentReviewData(session.user.id, id);
 
     if (!student) {
       return NextResponse.json({ error: "Student not found" }, { status: 404 });

@@ -6,15 +6,16 @@ import { getPublicReportAnalyticsById } from "@/lib/public-report-service";
 import { formatCurrency, formatPercent } from "@/lib/utils";
 
 type PublicReportPageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function generateMetadata({
   params,
 }: PublicReportPageProps): Promise<Metadata> {
-  const report = await getPublicReportAnalyticsById(params.id);
+  const { id } = await params;
+  const report = await getPublicReportAnalyticsById(id);
 
   if (!report) {
     return {
@@ -43,7 +44,8 @@ export async function generateMetadata({
 }
 
 export default async function PublicReportPage({ params }: PublicReportPageProps) {
-  const report = await getPublicReportAnalyticsById(params.id);
+  const { id } = await params;
+  const report = await getPublicReportAnalyticsById(id);
 
   if (!report) {
     notFound();

@@ -7,14 +7,15 @@ import { getMimeTypeForUpload, getUploadAbsolutePath } from "@/lib/uploads";
 export const runtime = "nodejs";
 
 type UploadRouteContext = {
-  params: {
+  params: Promise<{
     slug: string[];
-  };
+  }>;
 };
 
 export async function GET(_request: Request, { params }: UploadRouteContext) {
   try {
-    const absolutePath = getUploadAbsolutePath(params.slug);
+    const { slug } = await params;
+    const absolutePath = getUploadAbsolutePath(slug);
     const file = await readFile(absolutePath);
 
     return new NextResponse(file, {

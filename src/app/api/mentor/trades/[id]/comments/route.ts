@@ -7,9 +7,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type MentorTradeCommentRouteContext = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function GET(_request: Request, { params }: MentorTradeCommentRouteContext) {
@@ -19,7 +19,8 @@ export async function GET(_request: Request, { params }: MentorTradeCommentRoute
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const comments = await getTradeCommentsForMentor(session.user.id, params.id);
+  const { id } = await params;
+  const comments = await getTradeCommentsForMentor(session.user.id, id);
 
   if (!comments) {
     return NextResponse.json({ error: "Trade not found" }, { status: 404 });
@@ -36,13 +37,14 @@ export async function POST(request: Request, { params }: MentorTradeCommentRoute
   }
 
   try {
+    const { id } = await params;
     const body = (await request.json().catch(() => null)) as
       | { comment?: string }
       | null;
 
     const comment = await createTradeCommentForMentor(
       session.user.id,
-      params.id,
+      id,
       body?.comment ?? "",
     );
 
